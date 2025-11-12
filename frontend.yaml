@@ -1,0 +1,73 @@
+# ConfigMap pour le Frontend
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config
+  namespace: tp-app
+data:
+  API_URL: "http://backend:8080"
+  APP_NAME: "Mon Application TP"
+---
+# Deployment Frontend
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frontend
+  namespace: tp-app
+  labels:
+    app: frontend
+    tier: frontend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: frontend
+  template:
+    metadata:
+      labels:
+        app: frontend
+        tier: frontend
+    spec:
+      serviceAccountName: frontend-sa  # Utilise le ServiceAccount frontend
+      containers:
+      - name: frontend
+        image: nginx:alpine
+        ports:
+        - containerPort: 80
+        env:
+        # Variables depuis ConfigMap uniquement
+        - name: API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: frontend-config
+              key: API_URL
+        - name: APP_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: frontend-config
+              key: APP_NAME
+        # Le frontend n'a PAS accès aux secrets
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+---
+# Service pour le Frontend
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend
+  namespace: tp-app
+  labels:
+    app: frontend
+spec:
+  type: NodePort
+  ports:
+  - port: 80
+    targetPort: 80
+    nodePort: 30080  # Accessible via http://localhost:30080
+  selector:
+    app: frontend

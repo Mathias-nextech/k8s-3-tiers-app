@@ -1,0 +1,88 @@
+# ConfigMap pour le Backend
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: backend-config
+  namespace: tp-app
+data:
+  DATABASE_HOST: "postgres"
+  DATABASE_PORT: "5432"
+  APP_ENV: "development"
+---
+# Deployment Backend
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+  namespace: tp-app
+  labels:
+    app: backend
+    tier: backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+        tier: backend
+    spec:
+      serviceAccountName: backend-sa  # Utilise le ServiceAccount backend
+      containers:
+      - name: backend
+        image: nginx:alpine  # Pour le TP, on utilise nginx comme placeholder
+        ports:
+        - containerPort: 80
+        env:
+        # Variables depuis ConfigMap
+        - name: DATABASE_HOST
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: DATABASE_HOST
+        - name: DATABASE_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: DATABASE_PORT
+        - name: APP_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: backend-config
+              key: APP_ENV
+        # Variables depuis Secret
+        - name: DATABASE_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_USER
+        - name: DATABASE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: POSTGRES_PASSWORD
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "50m"
+          limits:
+            memory: "128Mi"
+            cpu: "100m"
+---
+# Service pour le Backend
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+  namespace: tp-app
+  labels:
+    app: backend
+spec:
+  type: ClusterIP
+  ports:
+  - port: 8080
+    targetPort: 80
+  selector:
+    app: backend
