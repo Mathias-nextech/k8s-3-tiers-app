@@ -1,17 +1,23 @@
 ## Déploiement
 
 ```bash
+# Step by step apply
 # 1. Créer le namespace
-kubectl apply -f 1-namespace.yaml
+kubectl apply -f namespace.yaml
 
 # 3. Déployer la base de données
-kubectl apply -f 3-database.yaml
+kubectl apply -f database.yaml
 
 # 4. Déployer le backend
-kubectl apply -f 4-backend.yaml
+kubectl apply -f backend.yaml
 
 # 5. Déployer le frontend
-kubectl apply -f 5-frontend.yaml
+kubectl apply -f frontend.yaml
+
+# OR
+
+# One liner apply
+kubetcl apply -k ./
 
 # Vérifier que tout fonctionne
 kubectl get all -n tp-app
