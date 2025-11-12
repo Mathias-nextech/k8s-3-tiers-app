@@ -29,7 +29,7 @@ spec:
         app: backend
         tier: backend
     spec:
-      serviceAccountName: backend-sa  # Utilise le ServiceAccount backend
+      # serviceAccountName: backend-sa  # Utilise le ServiceAccount backend
       containers:
       - name: backend
         image: nginx:alpine  # Pour le TP, on utilise nginx comme placeholder

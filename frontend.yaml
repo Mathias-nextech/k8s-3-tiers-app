@@ -28,7 +28,7 @@ spec:
         app: frontend
         tier: frontend
     spec:
-      serviceAccountName: frontend-sa  # Utilise le ServiceAccount frontend
+      # serviceAccountName: frontend-sa  # Utilise le ServiceAccount frontend
       containers:
       - name: frontend
         image: nginx:alpine

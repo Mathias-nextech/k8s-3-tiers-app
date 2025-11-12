@@ -15,3 +15,8 @@ kubectl apply -f 5-frontend.yaml
 
 # Vérifier que tout fonctionne
 kubectl get all -n tp-app
+
+# Voir le frontend
+minikube service frontend -n tp-app # minikube
+# OU
+kubectl port-forward -n tp-app service/frontend 8080:80 # Port forward
