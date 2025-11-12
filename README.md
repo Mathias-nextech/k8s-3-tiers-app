@@ -1,6 +1,6 @@
 ## Déploiement
 
-```bash
+```zsh
 # Step by step apply
 # 1. Créer le namespace
 kubectl apply -f namespace.yaml
@@ -26,3 +26,7 @@ kubectl get all -n tp-app
 minikube service frontend -n tp-app # minikube
 # OU
 kubectl port-forward -n tp-app service/frontend 8080:80 # Port forward
+
+```
+
+Have fun !
